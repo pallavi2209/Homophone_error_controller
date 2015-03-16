@@ -13,70 +13,70 @@ Data Sources:
 - Tagged data from CSCI544 Homeowork 2   
 
 Steps in Clasification and data correction:
-######1. POS tag data
-I used ClearNLP Part-of-Speech Tagger availaible at http://clearnlp.wikispaces.com/posTagger to tag the collected data.
-Command used: java -XX:+UseConcMarkSweepGC -Xmx1g com.clearnlp.nlp.engine.NLPDecode -z pos -c config_en_pos.xml -i <data-file> -oe pos
-Output: POS tagged file
-Example: brown.txt.pos
+####1. POS tag data
+I used ClearNLP Part-of-Speech Tagger availaible at http://clearnlp.wikispaces.com/posTagger to tag the collected data.   
+Command used: java -XX:+UseConcMarkSweepGC -Xmx1g com.clearnlp.nlp.engine.NLPDecode -z pos -c config_en_pos.xml -i <data-file> -oe pos   
+Output: POS tagged file   
+Example: brown.txt.pos   
 
-######2. Create feature file
-Using createHomophFeat.py (submitted in src), I created feature file to be used by perceptron for learning feature weights. I tried different combinations of following features:
-Previous to previous word (PPW), Previous to previous POS tag (PPT), Previous word (PW), Previous POS tag (PT), Previous word suffix (PWSF), Previous word shape (PWSH), Next to next word (NNW), Next to next POS tag (NNT), Next word (NW), Next POS tag (NT), Next word suffix (NWSF), Next word shape (NWSH).
+####2. Create feature file
+Using createHomophFeat.py (submitted in src), I created feature file to be used by perceptron for learning feature weights. I tried different combinations of following features:   
+Previous to previous word (PPW), Previous to previous POS tag (PPT), Previous word (PW), Previous POS tag (PT), Previous word suffix (PWSF), Previous word shape (PWSH), Next to next word (NNW), Next to next POS tag (NNT), Next word (NW), Next POS tag (NT), Next word suffix (NWSF), Next word shape (NWSH).   
 
-Command: python3 createHomophFeat.py [POS_tagged_file] [tagged_file_type] [feature_file]
-POS_tagged_file: output from clearNLP or pos.train file from HW2
-tagged_file_type: slash (if pos.train)
-                  clearNLP (if clearNLP tagged file)
-feature_file: output file (gets appended in each run)
+Command: python3 createHomophFeat.py [POS_tagged_file] [tagged_file_type] [feature_file]   
+POS_tagged_file: output from clearNLP or pos.train file from HW2   
+tagged_file_type: slash (if pos.train)   
+                  clearNLP (if clearNLP tagged file)   
+feature_file: output file (gets appended in each run)   
 
-Examples:
-python3 createHomophFeat.py pos.train slash in.percept.feat
-python3 createHomophFeat.py brown.txt.pos clearNLP in.percept.feat
-python3 createHomophFeat.py gutenbergAllRaw.txt.pos clearNLP in.percept.feat
-python3 createHomophFeat.py sentTrainingPure.pos clearNLP in.percept.feat
-python3 createHomophFeat.py sentDevPure.pos clearNLP in.percept.feat
-python3 createHomophFeat.py sentTestPure.pos clearNLP in.percept.feat
+Examples:   
+python3 createHomophFeat.py pos.train slash in.percept.feat   
+python3 createHomophFeat.py brown.txt.pos clearNLP in.percept.feat   
+python3 createHomophFeat.py gutenbergAllRaw.txt.pos clearNLP in.percept.feat   
+python3 createHomophFeat.py sentTrainingPure.pos clearNLP in.percept.feat   
+python3 createHomophFeat.py sentDevPure.pos clearNLP in.percept.feat   
+python3 createHomophFeat.py sentTestPure.pos clearNLP in.percept.feat   
 
-Output: in.percept.feat with features from all the files above.
+Output: in.percept.feat with features from all the files above.   
 
-python3 createHomophFeat.py hw3.dev.txt.pos clearNLP hw3.dev.feat
-Output: hw3.dev.feat , dev file features to be used in Step 3.
+python3 createHomophFeat.py hw3.dev.txt.pos clearNLP hw3.dev.feat   
+Output: hw3.dev.feat , dev file features to be used in Step 3.   
 
-######3. Train perceptron
-I used the perceptron oh HW2 to train my features
-Command: python3 perceplearn.py [feature_file] [output_model] -h [dev_file]
-feature_file: output file from Step 2.
-output_model: output of this run
-dev_file: Optional. To test model in each iteration and pick best one.
+####3. Train perceptron
+I used the perceptron oh HW2 to train my features   
+Command: python3 perceplearn.py [feature_file] [output_model] -h [dev_file]   
+feature_file: output file from Step 2.   
+output_model: output of this run   
+dev_file: Optional. To test model in each iteration and pick best one.   
 
-Example: python3 perceplearn.py in.percept.feat homoph.model -h hw3.dev.feat
-Output: Prints accuracy in each iteration and saves model file with max accuracy.
+Example: python3 perceplearn.py in.percept.feat homoph.model -h hw3.dev.feat   
+Output: Prints accuracy in each iteration and saves model file with max accuracy.   
 
-######4. Apply model and correct errors in file.
-Using homophCorrect.py (submitted in src), I correct the error file using the model fom Step 3.
+####4. Apply model and correct errors in file.
+Using homophCorrect.py (submitted in src), I correct the error file using the model fom Step 3.   
 
-Command: python3 homophCorrect.py [tagged_errored_input_file] [perceptron_model] [errored_input_file] [corrected_output_file]
-tagged_errored_input_file: error file tagged using clearNLP
-perceptron_model: model formed from perceptron training
-errored_input_file: error file given
-corrected_output_file: corrected error file, which is submitted
+Command: python3 homophCorrect.py [tagged_errored_input_file] [perceptron_model] [errored_input_file] [corrected_output_file]   
+tagged_errored_input_file: error file tagged using clearNLP   
+perceptron_model: model formed from perceptron training   
+errored_input_file: error file given  
+corrected_output_file: corrected error file, which is submitted   
 
-Example:
-python3 homophCorrect.py hw3.dev.err.txt.pos homoph.model hw3.dev.err.txt hw3.devoutput.txt
-python3 homophCorrect.py hw3.test.err.txt.pos homoph.model hw3.test.err.txt hw3.output.txt
+Example:   
+python3 homophCorrect.py hw3.dev.err.txt.pos homoph.model hw3.dev.err.txt hw3.devoutput.txt   
+python3 homophCorrect.py hw3.test.err.txt.pos homoph.model hw3.test.err.txt hw3.output.txt   
 
-######5. Calculate accuracy
-I calculate accuracy on dev data using calcFScore.py (submitted in src)
-Command: python3 calcFScore.py [incorrect_file] [correct_file] [corrected_output_file]
-Example: python3 calcFScore.py hw3.dev.err.txt hw3.dev.txt hw3.devoutput.txt
+####5. Calculate accuracy
+I calculate accuracy on dev data using calcFScore.py (submitted in src)   
+Command: python3 calcFScore.py [incorrect_file] [correct_file] [corrected_output_file]   
+Example: python3 calcFScore.py hw3.dev.err.txt hw3.dev.txt hw3.devoutput.txt   
 
-Results (Refer Step 2. for full feature names and details):
-Features:
-Previous to previous word (i-2 word),
-Previous to previous POS tag (i-2 tag),
-Previous word (i-1 word),
-Previous POS tag (i-1 tag),
-Previous word suffix (i-1 suffix),
+Results (Refer Step 2. for full feature names and details):   
+Features:   
+Previous to previous word (i-2 word),   
+Previous to previous POS tag (i-2 tag),   
+Previous word (i-1 word),   
+Previous POS tag (i-1 tag),   
+Previous word suffix (i-1 suffix),   
 Previous word shape (i-1 shape),
 Next to next word (i+2 word),
 Next to next POS tag (i+2 tag),
@@ -105,19 +105,19 @@ Result F-Score: 0.98616
 
 Using POS tags as features give good F-Score (~98%) on correct file, but reduces accuracy on errored file by around 7-8%. One reason for this can be, incorrect tags predicted by clearNLP because of incorrect words in error file. So, I decided not to use POS tags as features.
 
-#####Final features used:
-Previous to previous word (i-2 word),
-Previous word (i-1 word),
-Previous word suffix (i-1 suffix),
-Previous word shape (i-1 shape),
-Next to next word (i+2 word),
-Next word (i+1 word),
-Next word suffix (i+1 suffix),
-Next word shape (i+1 shape).
+###Final features used:
+Previous to previous word (i-2 word),   
+Previous word (i-1 word),   
+Previous word suffix (i-1 suffix),   
+Previous word shape (i-1 shape),   
+Next to next word (i+2 word),   
+Next word (i+1 word),   
+Next word suffix (i+1 suffix),   
+Next word shape (i+1 shape).   
 
-Precision: 0.97972
-Recall: 0.99270
-F-Score: 0.98616
+####Precision: 0.97972   
+####Recall: 0.99270   
+####F-Score: 0.98616   
 
 
 ###LANGUAGE MODEL approach:
