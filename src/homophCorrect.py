@@ -8,7 +8,6 @@ import pickle
 import re
 
 dictWordClass = {"it's":"c_itis", "its": "c_its", "you're": "c_youre", "your": "c_your", "they're": "c_theyre", "their": "c_their" , "loose": "c_loose" , "lose": "c_lose", "to": "c_to", "too": "c_too"}
-#setcls = set()
 listChanged = []
 
 def checkReqContext(pPrev, prev, curr, nxt, nNxt):
@@ -47,15 +46,12 @@ def form_feats_predict(pPrev, prev, curr, nxt, nNxt, dictClsWts):
   if not res == "NA":
     setcls = getClass(res)
     
-    #listChanged.append(res)
     f_pPrevW = "PPW:" + pPrevW
     f_prevW = "PW:" + prevW
-    #f_currW = "CW:" + str(curr[0])
     f_nxtW = "NW:" + nxtW
     f_nNxtW = "NNW:" +  nNxtW
     f_pPrevTag = "PPT:" + str(pPrev[1])
     f_prevTag = "PT:" + str(prev[1])
-    #f_currTag = "CT:" + str(curr[1])
     f_nxtTag = "NT:" + str(nxt[1])
     f_nNxtTag = "NNT:" + str(nNxt[1])
     f_prevWSuff = "PWSF:" + prevW[-3:]
@@ -63,22 +59,16 @@ def form_feats_predict(pPrev, prev, curr, nxt, nNxt, dictClsWts):
     f_prevWShape = "PWSH:" + getWShape(prevW)
     f_nextWShape = "NWSH:" + getWShape(nxtW)
 
-#    resLine += f_pPrevW + " " + f_pPrevTag + " " + f_prevW + " " + f_prevTag + " " + f_prevWSuff + " " + f_nxtWSuff + " " + f_nxtW + " " + f_nxtTag + " " + f_nNxtW + " " + f_nNxtT"\n"
-
-    resLine += f_prevW +  " " + f_prevWSuff + " " + f_nxtWSuff + " " + f_nxtW + " " + f_prevWShape + " " + f_nextWShape + "\n"
-    #print(resLine)
-    #print("currW:" + currW)
+    resLine += f_pPrevW + " " +  f_prevW + " " + f_prevWSuff + " " + f_prevWShape + " " + f_nxtW + " "  + f_nxtWSuff + " " + f_nextWShape + " " + f_nNxtW +"\n"
 
     tokens = resLine.split()
     maxwtcls = max( setcls , key = lambda cls: sum( [ dictClsWts[cls][token] for token in tokens[1:] if token in dictClsWts[cls]]) )
-   # print("maxwtcls: "+ maxwtcls)    
     for k,v in dictWordClass.items():
       if v == maxwtcls:
         predWord = k  
         if currW == predWord:
           listChanged.append((0, predWord))
         else:
-    #      print("word changed:" + predWord)
           listChanged.append((1, predWord))
 
 
@@ -145,7 +135,6 @@ def homophClassifyMain(argv):
     data=pickle.load(handle)
 
   dictClsWts=data["wDict"]
-  #setcls = data["setcls"]
   handle.close()
 
   inTaggedFile  = open(inTaggedFileName, "r")
@@ -158,7 +147,6 @@ def homophClassifyMain(argv):
       tag = l[2]
       wordTagList.append([word,tag])
   cWordTagList = combine_apo_words(wordTagList)
-  ##changeList = list of tuple (ifchanged, word)
   classify_and_correct(cWordTagList, dictClsWts)
  
   myregex = re.compile("\\b(?:it's|its|you're|your|they're|their|loose|lose|to|too)\\b")
@@ -166,7 +154,6 @@ def homophClassifyMain(argv):
   rawFile = open(inRawFileName, "r")
   data = rawFile.read()
   matchCount = len(re.findall(myregex, data))
-  print(str(matchCount))
   matches = re.finditer(myregex, data)
   idxChangeList = 0
   try:
@@ -175,15 +162,10 @@ def homophClassifyMain(argv):
     pass
   outfile = open(outFileName,"a")
   iPrevEnd = 0
-  #print(listChanged)
-  print(str(len(listChanged)))
   for match in matches:
     ifSame = chckSameGroup(listChanged[idxChangeList][1],match.group())
     if ifSame == False:
       continue;
-#      print("index:"+ str(match.start()) + "re Match:" + str(match.group()))
-#      print("listItem:"+ listChanged[idxChangeList][1])
-  #    sys.exit()
     elif data[match.start()-1]=="-":
       idxChangeList +=1
       continue; 
