@@ -1,3 +1,4 @@
+###Error detection and correction: dealing with homophone confusion
 In written language, errors involving the use of words that sound similar or the same are fairly common. For example, the word its is frequently used where it's should, and vice-versa. Other confusable pairs include: they're/their/there, you're/your and loose/lose.
 
 In this assignment you will develop an approach for detecting and correcting such errors. You only have to worry about these specific types of confusion (in either direction):
@@ -23,13 +24,13 @@ Data Sources:
 - Tagged data from CSCI544 Homeowork 2   
 
 Steps in Clasification and data correction:
-####1. POS tag data
+#####1. POS tag data
 I used ClearNLP Part-of-Speech Tagger availaible at http://clearnlp.wikispaces.com/posTagger to tag the collected data.   
 Command used: java -XX:+UseConcMarkSweepGC -Xmx1g com.clearnlp.nlp.engine.NLPDecode -z pos -c config_en_pos.xml -i <data-file> -oe pos   
 Output: POS tagged file   
 Example: brown.txt.pos   
 
-####2. Create feature file
+#####2. Create feature file
 Using createHomophFeat.py (submitted in src), I created feature file to be used by perceptron for learning feature weights. I tried different combinations of following features:   
 Previous to previous word (PPW), Previous to previous POS tag (PPT), Previous word (PW), Previous POS tag (PT), Previous word suffix (PWSF), Previous word shape (PWSH), Next to next word (NNW), Next to next POS tag (NNT), Next word (NW), Next POS tag (NT), Next word suffix (NWSF), Next word shape (NWSH).   
 
@@ -52,7 +53,7 @@ Output: in.percept.feat with features from all the files above.
 python3 createHomophFeat.py hw3.dev.txt.pos clearNLP hw3.dev.feat   
 Output: hw3.dev.feat , dev file features to be used in Step 3.   
 
-####3. Train perceptron
+#####3. Train perceptron
 I used the perceptron oh HW2 to train my features   
 Command: python3 perceplearn.py [feature_file] [output_model] -h [dev_file]   
 feature_file: output file from Step 2.   
@@ -62,7 +63,7 @@ dev_file: Optional. To test model in each iteration and pick best one.
 Example: python3 perceplearn.py in.percept.feat homoph.model -h hw3.dev.feat   
 Output: Prints accuracy in each iteration and saves model file with max accuracy.   
 
-####4. Apply model and correct errors in file.
+#####4. Apply model and correct errors in file.
 Using homophCorrect.py (submitted in src), I correct the error file using the model fom Step 3.   
 
 Command: python3 homophCorrect.py [tagged_errored_input_file] [perceptron_model] [errored_input_file] [corrected_output_file]   
@@ -75,7 +76,7 @@ Example:
 python3 homophCorrect.py hw3.dev.err.txt.pos homoph.model hw3.dev.err.txt hw3.devoutput.txt   
 python3 homophCorrect.py hw3.test.err.txt.pos homoph.model hw3.test.err.txt hw3.output.txt   
 
-####5. Calculate accuracy
+#####5. Calculate accuracy
 I calculate accuracy on dev data using calcFScore.py (submitted in src)   
 Command: python3 calcFScore.py [incorrect_file] [correct_file] [corrected_output_file]   
 Example: python3 calcFScore.py hw3.dev.err.txt hw3.dev.txt hw3.devoutput.txt   
@@ -125,9 +126,9 @@ Next word (i+1 word),
 Next word suffix (i+1 suffix),   
 Next word shape (i+1 shape).   
 
-####Precision: 0.97972   
-####Recall: 0.99270   
-####F-Score: 0.98616   
+#####Precision: 0.97972   
+#####Recall: 0.99270   
+#####F-Score: 0.98616   
 
 
 ###LANGUAGE MODEL approach:
