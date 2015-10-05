@@ -1,4 +1,14 @@
-I have tried two approaches for this assignment:
+In written language, errors involving the use of words that sound similar or the same are fairly common. For example, the word its is frequently used where it's should, and vice-versa. Other confusable pairs include: they're/their/there, you're/your and loose/lose.
+
+In this assignment you will develop an approach for detecting and correcting such errors. You only have to worry about these specific types of confusion (in either direction):
+
+    it's vs its
+    you're vs your
+    they're vs their
+    loose vs lose
+    to vs too
+
+I have tried two approaches for detecting and correcting homophone errors:
 1. Classification (Successful)
 2. Language model (Unsuccessful)
 
